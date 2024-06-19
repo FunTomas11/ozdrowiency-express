@@ -1,4 +1,4 @@
-import { send } from '../public/javascripts/notification'
+const { send } = require('../public/javascripts/notification')
 
 var express = require('express');
 var router = express.Router();
@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/send', function (req, res, next) {
   send();
+  res.send(200);
 })
 
 module.exports = router;
