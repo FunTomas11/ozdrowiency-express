@@ -112,9 +112,14 @@ router.get('/answers/:id', (req, res) => {
   });
 });
 
-router.post('/answers', (req, res) => {
+router.post('/answers', async (req, res) => {
   const { id, date, patientId, doctorId, score, answers } = req.body;
   const answerId = id || uuidv4();
+
+  const existingAnswer = await getAnswerById(db, answerId);
+  if (existingAnswer) {
+    return res.status(400).json({ error: 'Answer ID already exists' });
+  }
 
   db.serialize(() => {
     db.run('BEGIN TRANSACTION');
@@ -164,6 +169,15 @@ router.post('/answers', (req, res) => {
     }
   });
 });
+
+function getAnswerById(db, id) {
+  return new Promise((resolve, reject) => {
+    db.get('SELECT id FROM answers WHERE id = ?', [id], (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+}
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
