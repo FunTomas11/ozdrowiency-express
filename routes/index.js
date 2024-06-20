@@ -148,7 +148,7 @@ router.post('/answers', async (req, res) => {
         insertAnswerDetailStmt.run(
           detailId,
           answerId,
-          detail.questionId,
+          detail.id,
           detail.answer
         );
       }
