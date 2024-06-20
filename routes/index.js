@@ -7,39 +7,6 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(path.join(__dirname, '../db/database.sqlite'));
 
-router.get('/users', (req, res) => {
-  const { doctorId, role } = req.query;
-
-  let sql = 'SELECT * FROM users';
-  const params = [];
-
-  if (doctorId && role) {
-    sql += ' WHERE doctorId = ? AND role = ?';
-    params.push(doctorId, role);
-  }
-
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json(rows);
-  });
-});
-
-router.get('/users/:id', (req, res) => {
-  const userId = req.params.id;
-
-  db.get('SELECT * FROM users WHERE id = ?', [userId], (err, row) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    if (!row) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    res.json(row);
-  });
-});
-
 router.get('/questions', (req, res) => {
   const page = parseInt(req.query._page) || 1;
   const perPage = parseInt(req.query._per_page) || 5;
