@@ -20,4 +20,4 @@ async function login(username, password) {
     });
 }
 
-module.exports = { createUser, login };
+module.exports = { login };

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const { randomUUID } = require('crypto');
-const { createUser, login } = require('../db/models/user');
+const { login } = require('../db/models/user');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
