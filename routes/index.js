@@ -52,10 +52,14 @@ router.get('/answers', (req, res) => {
     params.push(patientId);
   }
 
+  console.log('Executing SQL:', sql, 'with params:', params);
+
   db.all(sql, params, (err, rows) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
+    console.log('Retrieved rows:', rows);
+
     const answers = rows.reduce((acc, row) => {
       const { answerId, date, patientId, doctorId, score, detailId, questionId, content, answer } = row;
       if (!acc[answerId]) {
@@ -113,13 +117,9 @@ router.get('/answers/:id', (req, res) => {
 });
 
 router.post('/answers', async (req, res) => {
+  console.log('Received data:', req.body);
   const { id, date, patientId, doctorId, score, answers } = req.body;
   const answerId = id || uuidv4();
-
-  const existingAnswer = await getAnswerById(db, answerId);
-  if (existingAnswer) {
-    return res.status(400).json({ error: 'Answer ID already exists' });
-  }
 
   db.serialize(() => {
     db.run('BEGIN TRANSACTION');
@@ -143,7 +143,7 @@ router.post('/answers', async (req, res) => {
         score
       );
 
-      answers.forEach(detail => {
+      for (const detail of answers) {
         const detailId = uuidv4();
         insertAnswerDetailStmt.run(
           detailId,
@@ -151,13 +151,14 @@ router.post('/answers', async (req, res) => {
           detail.questionId,
           detail.answer
         );
-      });
+      }
 
       db.run('COMMIT', (err) => {
         if (err) {
           db.run('ROLLBACK');
           return res.status(500).json({ error: err.message });
         }
+        console.log('Answer saved successfully:', answerId);
         res.status(201).json({ message: 'Answer saved successfully', id: answerId });
       });
     } catch (err) {
