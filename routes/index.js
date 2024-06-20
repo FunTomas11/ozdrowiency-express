@@ -212,9 +212,10 @@ router.post('/sendResults', function (req, res, next) {
     getPatientById(patientId, res, (patient) => {
       const patientName = patient.name;
       const patientEmail = patient.email;
+      const isQualified = answerItem.score >= 50;
 
       // Call sendResults function with patient's details
-      sendResults(patientEmail, patientName);
+      sendResults(patientEmail, patientName, isQualified);
 
       res.status(200).send('Results email sent successfully');
     });
@@ -257,7 +258,7 @@ router.post('/sendQualified', function (req, res, next) {
       const patientPhone = patient.phone;
 
       // Call sendResults function with patient's details
-      sendQualified(patientEmail, patientName);
+      sendQualified(patientEmail, patientName, patientPhone);
 
       res.status(200).send('Results email sent successfully');
     });

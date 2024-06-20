@@ -78,7 +78,7 @@ function sendReminder(receiverEmail, receiverName) {
         })
 }
 
-function sendQualified(receiverEmail, receiverName, patientName, patientPhone) {
+function sendQualified(receiverEmail, receiverName, patientPhone) {
     const request = mailjet
         .post('send', {version: 'v3.1'})
         .request({
@@ -97,7 +97,7 @@ function sendQualified(receiverEmail, receiverName, patientName, patientPhone) {
                     Subject: "Patient qualified for an appointment",
                     TextPart: "",
                     HTMLPart: "<p>Dear dr " + receiverName + "," +
-                        "<br><br><p>Based on the last filled survey, patient " + patientName + " is qualified for check-up.</p>" +
+                        "<br><br><p>Based on the last filled survey, patient " + receiverName + " is qualified for check-up.</p>" +
                         "<br><p>Please contact the patient to arrange an appointment.</p>" +
                         "<br><p>Patient contact info: " + patientPhone + "</p>" +
                         "<br><p>Best regards,<br>The MediSurvey Team</p>"
