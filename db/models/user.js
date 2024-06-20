@@ -1,4 +1,6 @@
-const db = new sqlite3.Database(path.join(__dirname, '../db/database.sqlite'));
+const path = require('path');
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database(path.join(__dirname, '../database.sqlite'));
 const bcrypt = require('bcrypt');
 
 async function login(username, password) {
