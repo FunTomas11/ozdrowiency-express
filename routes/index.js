@@ -1,4 +1,4 @@
-const { send } = require('../public/javascripts/notification')
+const { sendResults, sendReminder, sendQualified } = require('../public/javascripts/notification')
 
 var express = require('express');
 var router = express.Router();
@@ -203,9 +203,83 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.get('/send', function (req, res, next) {
-  send();
-  res.send(200);
+router.post('/sendResults', function (req, res, next) {
+  try {
+    const answerItem = req.body;
+    const patientId = answerItem.patientId;
+
+    // Fetch patient details from the database directly
+    getPatientById(patientId, res, (patient) => {
+      const patientName = patient.name;
+      const patientEmail = patient.email;
+
+      // Call sendResults function with patient's details
+      sendResults(patientEmail, patientName);
+
+      res.status(200).send('Results email sent successfully');
+    });
+  } catch (error) {
+    console.error('Error sending results:', error);
+    res.status(500).send('Internal Server Error');
+  }
 })
+
+router.post('/sendReminder', function (req, res, next) {
+  try {
+    const answerItem = req.body;
+    const patientId = answerItem.patientId;
+
+    // Fetch patient details from the database directly
+    getPatientById(patientId, res, (patient) => {
+      const patientName = patient.name;
+      const patientEmail = patient.email;
+
+      // Call sendResults function with patient's details
+      sendReminder(patientEmail, patientName);
+
+      res.status(200).send('Results email sent successfully');
+    });
+  } catch (error) {
+    console.error('Error sending results:', error);
+    res.status(500).send('Internal Server Error');
+  }
+})
+
+router.post('/sendQualified', function (req, res, next) {
+  try {
+    const answerItem = req.body;
+    const patientId = answerItem.patientId;
+
+    // Fetch patient details from the database directly
+    getPatientById(patientId, res, (patient) => {
+      const patientName = patient.name;
+      const patientEmail = patient.email;
+      const patientPhone = patient.phone;
+
+      // Call sendResults function with patient's details
+      sendQualified(patientEmail, patientName);
+
+      res.status(200).send('Results email sent successfully');
+    });
+  } catch (error) {
+    console.error('Error sending results:', error);
+    res.status(500).send('Internal Server Error');
+  }
+})
+
+function getPatientById(patientId, res, callback) {
+  db.get('SELECT * FROM users WHERE id = ?', [patientId], (err, patient) => {
+    if (err) {
+      console.error('Error fetching patient:', err.message);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    if (!patient) {
+      return res.status(404).send('Patient not found');
+    }
+
+    callback(patient);
+  });
+}
 
 module.exports = router;
