@@ -5,7 +5,8 @@ var router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(path.join(__dirname, '../db/database.sqlite'));
+const dbPath = path.join('/tmp', 'database.sqlite');
+const db = new sqlite3.Database(dbPath);
 
 router.get('/questions', (req, res) => {
   const page = parseInt(req.query._page) || 1;

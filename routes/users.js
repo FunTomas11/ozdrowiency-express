@@ -1,6 +1,7 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(path.join(__dirname, '../db/database.sqlite'));
+const dbPath = path.join('/tmp', 'database.sqlite');
+const db = new sqlite3.Database(dbPath);
 var express = require('express');
 var router = express.Router();
 const { randomUUID } = require('crypto');
