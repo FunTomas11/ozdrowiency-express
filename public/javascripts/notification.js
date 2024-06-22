@@ -1,7 +1,7 @@
 const Mailjet = require('node-mailjet')
 const mailjet = new Mailjet({
-    apiKey: 'API_KEY',
-    apiSecret: 'API_SECRET'
+    apiKey: process.env.API_KEY,
+    apiSecret: process.env.API_SECRET
 });
 
 function sendResults(receiverEmail, receiverName, qualified) {
@@ -25,10 +25,10 @@ function sendResults(receiverEmail, receiverName, qualified) {
                     Subject: "Here are your last survey results",
                     TextPart: "",
                     HTMLPart: "<p>Dear " + receiverName + "," +
-                        "<br><br>Based on your last survey results you are " + "<h3>" + qualificationStatus + " for the next appointment.</h3></p>" +
-                        "<br><p>" + nextStepMessage + "</p>" +
-                        "<br><p>Thank you for using MediSurvey. We are here to support your health journey.</p>" +
-                        "<br><p>Best regards,<br>The MediSurvey Team</p>"
+                        "<br><br>Based on your last survey results you are " + "<b>" + qualificationStatus + " for the next appointment.</b></p>" +
+                        "<p>" + nextStepMessage + "</p>" +
+                        "<p>Thank you for using MediSurvey. We are here to support your health journey.</p>" +
+                        "<p>Best regards,<br>The MediSurvey Team</p>"
                 }
             ]
         })
@@ -62,9 +62,9 @@ function sendReminder(receiverEmail, receiverName) {
                     TextPart: "",
                     HTMLPart: "<p>Dear " + receiverName + "," +
                         "<br><br><p>This is a friendly reminder to complete your new survey. Your feedback is essential for us to provide the best care possible.</p>" +
-                        "<br><p>Please log in to your account and complete the survey at your earliest convenience.</p>" +
-                        "<br><p>Thank you for your time and cooperation.</p>" +
-                        "<br><p>Best regards,<br>The MediSurvey Team</p>"
+                        "<p>Please log in to your account and complete the survey at your earliest convenience.</p>" +
+                        "<p>Thank you for your time and cooperation.</p>" +
+                        "<p>Best regards,<br>The MediSurvey Team</p>"
                 }
             ]
         })
@@ -78,7 +78,7 @@ function sendReminder(receiverEmail, receiverName) {
         })
 }
 
-function sendQualified(receiverEmail, receiverName, patientPhone) {
+function sendQualified(doctorSurname, receiverEmail, receiverName, patientPhone) {
     const request = mailjet
         .post('send', {version: 'v3.1'})
         .request({
@@ -96,11 +96,11 @@ function sendQualified(receiverEmail, receiverName, patientPhone) {
                     ],
                     Subject: "Patient qualified for an appointment",
                     TextPart: "",
-                    HTMLPart: "<p>Dear dr " + receiverName + "," +
+                    HTMLPart: "<p>Dear dr " + doctorSurname + "," +
                         "<br><br><p>Based on the last filled survey, patient " + receiverName + " is qualified for check-up.</p>" +
-                        "<br><p>Please contact the patient to arrange an appointment.</p>" +
-                        "<br><p>Patient contact info: " + patientPhone + "</p>" +
-                        "<br><p>Best regards,<br>The MediSurvey Team</p>"
+                        "<p>Please contact the patient to arrange an appointment.</p>" +
+                        "<p>Patient contact info: " + patientPhone + "</p>" +
+                        "<p>Best regards,<br>The MediSurvey Team</p>"
                 }
             ]
         })

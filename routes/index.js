@@ -234,17 +234,22 @@ router.post('/sendQualified', function (req, res, next) {
   try {
     const answerItem = req.body;
     const patientId = answerItem.patientId;
+    const doctorId = answerItem.doctorId;
 
     // Fetch patient details from the database directly
     getPatientById(patientId, res, (patient) => {
-      const patientName = patient.name;
+      const patientName = patient.name + " " + patient.surname;
       const patientEmail = patient.email;
       const patientPhone = patient.phone;
 
+      getDoctorById(doctorId, res, (doctor) => {
+        const doctorSurname = doctor.surname;
+
       // Call sendResults function with patient's details
-      sendQualified(patientEmail, patientName, patientPhone);
+      sendQualified(doctorSurname, patientEmail, patientName, patientPhone);
 
       res.status(200).send('Results email sent successfully');
+    });
     });
   } catch (error) {
     console.error('Error sending results:', error);
@@ -274,6 +279,21 @@ function getPatientById(patientId, res, callback) {
     }
 
     callback(patient);
+  });
+}
+
+function getDoctorById(doctorId, res, callback) {
+  db.get('SELECT * FROM users WHERE id = ?', [doctorId], (err, doctor) => {
+    if (err) {
+      console.error('Error fetching doctor:', err.message);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    if (!doctor) {
+      return res.status(404).send('Patient not found');
+    }
+
+    callback(doctor);
   });
 }
 
