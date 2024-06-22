@@ -34,42 +34,6 @@ router.get('/questions', (req, res) => {
   });
 });
 
-router.get('/answers/:id', (req, res) => {
-  const answerId = req.params.id;
-  const sql = `
-    SELECT a.id AS answerId, a.date, a.patientId, a.doctorId, a.score, 
-           ad.id AS detailId, ad.questionId, q.content, ad.answer
-    FROM answers a
-    JOIN answer_details ad ON a.id = ad.answerId
-    JOIN questions q ON ad.questionId = q.id
-    WHERE a.id = ?
-  `;
-  db.all(sql, [answerId], (err, rows) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    if (rows.length === 0) {
-      return res.status(404).json({ error: 'Answer not found' });
-    }
-
-    const answer = {
-      id: rows[0].answerId,
-      date: rows[0].date,
-      patientId: rows[0].patientId,
-      doctorId: rows[0].doctorId,
-      score: rows[0].score,
-      answers: rows.map(row => ({
-        id: row.detailId,
-        questionId: row.questionId,
-        content: row.content,
-        answer: row.answer
-      }))
-    };
-
-    res.json(answer);
-  });
-});
-
 router.get('/answers', (req, res) => {
   const { doctorId, patientId } = req.query;
 
@@ -115,6 +79,42 @@ router.get('/answers', (req, res) => {
     }, {});
 
     res.json(Object.values(answers));
+  });
+});
+
+router.get('/answers/:id', (req, res) => {
+  const answerId = req.params.id;
+  const sql = `
+    SELECT a.id AS answerId, a.date, a.patientId, a.doctorId, a.score, 
+           ad.id AS detailId, ad.questionId, q.content, ad.answer
+    FROM answers a
+    JOIN answer_details ad ON a.id = ad.answerId
+    JOIN questions q ON ad.questionId = q.id
+    WHERE a.id = ?
+  `;
+  db.all(sql, [answerId], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Answer not found' });
+    }
+
+    const answer = {
+      id: rows[0].answerId,
+      date: rows[0].date,
+      patientId: rows[0].patientId,
+      doctorId: rows[0].doctorId,
+      score: rows[0].score,
+      answers: rows.map(row => ({
+        id: row.detailId,
+        questionId: row.questionId,
+        content: row.content,
+        answer: row.answer
+      }))
+    };
+
+    res.json(answer);
   });
 });
 
