@@ -7,6 +7,7 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const dbPath = path.join('/tmp', 'database.sqlite');
 const db = new sqlite3.Database(dbPath);
+const findPatientsAndSendReminders = require('../public/javascripts/remainder');
 
 router.get('/questions', (req, res) => {
   const page = parseInt(req.query._page) || 1;
@@ -255,6 +256,16 @@ router.post('/sendQualified', function (req, res, next) {
     res.status(500).send('Internal Server Error');
   }
 })
+
+router.get('/tasks/sendReminders', async (req, res) => {
+  try {
+    await findPatientsAndSendReminders();
+    res.status(200).send('Reminders sent successfully');
+  } catch (err) {
+    console.error('Error sending reminders:', err);
+    res.status(500).send('Failed to send reminders');
+  }
+});
 
 function getPatientById(patientId, res, callback) {
   db.get('SELECT * FROM users WHERE id = ?', [patientId], (err, patient) => {

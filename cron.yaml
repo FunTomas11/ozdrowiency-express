@@ -1,0 +1,5 @@
+cron:
+- description: "send remainders to all the patients that have not filled the survey for more than 2 weeks"
+  url: /tasks/sendReminders
+  schedule: every 24 hours
+  target: api
