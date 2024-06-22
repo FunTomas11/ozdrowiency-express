@@ -8,7 +8,7 @@ const saltRounds = 10;
 
 const rawData = fs.readFileSync(path.join(__dirname, 'db.json'));
 const mockData = JSON.parse(rawData);
-const dbPath = path.join('/tmp', 'database.sqlite');
+const dbPath = path.join('tmp', 'database.sqlite');
 
 async function setupDatabase(callback) {
   const db = new sqlite3.Database(dbPath);
